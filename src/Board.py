@@ -130,13 +130,13 @@ class Board:
         shuffle(resources)
 
         # Choose dice roles !!!Currently chosen at random but should implement proper order
-        dice_roles = [2, 5, 4, 6, 3, 9, 8, 11, 11, 10, 6, 3, 8, 4, 8, 10, 11, 12]
-        shuffle(dice_roles)
+        number_markers = [2, 5, 4, 6, 3, 9, 8, 11, 11, 10, 6, 3, 8, 4, 8, 10, 11, 12]
+        shuffle(number_markers)
         hex_index = 0
         for hexagon in resources:
             if hexagon.resource_index != -1:
-                hexagon.dice_roll = dice_roles[hex_index]
-                hexagon.probability = probabilityOfRoll(dice_roles[hex_index])
+                hexagon.dice_roll = number_markers[hex_index]
+                hexagon.probability = probabilityOfRoll(number_markers[hex_index])
 
                 # Update connected nodes
                 for node in self.hex_node_connectivity[hex_index]:
@@ -146,7 +146,28 @@ class Board:
                 hex_index += 1
 
     def getInputValues(self):
-        pass
+        """
+        Assemble board parameters
+        :return: Board parameters
+        """
+        # Node inputs
+        resource_probabilities = []
+        settlements = []
+        cities = []
+        ports = []
+
+        for node in self.nodes:
+            resource_probabilities += node.resource_probabilities
+            settlements += node.settlement
+            cities += node.city
+            ports += node.ports
+
+        # Edge inputs
+        roads = []
+        for edge in self.edges:
+            roads += edge.road
+
+        return resource_probabilities + settlements + cities + ports + roads
 
 
 class Hex:
