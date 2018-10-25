@@ -34,6 +34,18 @@ class Node:
         """
         self.ports = [0] * 6
 
+    def isEmpty(self):
+        """
+        Checks if node has not been built on
+        :return: Bool - True if node is empty
+        """
+        for i in range(len(self.city)):
+            if (self.settlement[i] == 1) or (self.city[i] == 1):
+                return False
+
+        return True
+
+
 
 class Edge:
     def __init__(self, ID, node_1, node_2, number_of_players):
@@ -179,8 +191,3 @@ class Hex:
 def probabilityOfRoll(number):
     a = [0, 0, 1.0/36.0, 2.0/36.0, 3.0/36.0, 4.0/36.0, 5.0/36.0, 6.0/36.0, 5.0/36.0, 4.0/36.0, 3.0/36.0, 2.0/36.0, 1.0/36.0]
     return a[number]
-
-if __name__ == "__main__":
-    a = Board(1)
-    a.generateBoard()
-    print()
