@@ -1,3 +1,6 @@
+import random
+
+
 class Player:
     def __init__(self, move_function):
         """
@@ -7,7 +10,6 @@ class Player:
 
         self.player_index = 0
         self.game_manager = None
-
         self.move_function = move_function
 
         # Information known about other players
@@ -17,6 +19,7 @@ class Player:
 
         """
         Power Cards:
+        
         - self.power_cards is a list of number of each type of card
          - List order is: [Knight, Take 2 Resources, Construct 2 Roads, Monopoly, Victory Point]]
         """
@@ -24,11 +27,20 @@ class Player:
 
         """
         Resources:
+        
         - self.resource_cards is a list of number of each type of class
-        - list order is: [ Wheat, Stone, Brick, Sheep, Wood ]
+        - list order is: [Wheat, Stone, Brick, Sheep, Wood]
         - self.resource_dice_rolls is a list of which rolls get each resource
         """
         self.resource_cards = [0] * 5
+
+        """
+        Initialise road, settlement and city pieces:
+
+         - self.building_pieces is list of quantities of each type of piece 
+         - List is in order: [Road, Settlement, City] 
+        """
+        self.building_pieces = [15, 5, 4]
 
     def setup(self):
         """
@@ -92,3 +104,35 @@ class Player:
         return self.move_function(input_vector)
 
 
+
+def randomAction(inputVector):
+    """
+    Sample wrapper function for network
+    :param inputVector: vector containing all player knowledge of the game state
+    :return: dictionary made up of vectors containing the choices made by the network broken up by category for convenience
+    """
+
+    # Generate random values for choices of settlement placement
+    settlements = [0] * 54
+    cities = [0] * 54
+    for i in range(54):
+        settlements[i] = random.uniform(0, 1)
+        cities[i] = random.uniform(0, 1)
+
+    # Generate random values for choices of settlement placement
+    roads = [0] * 72
+    for i in range(72):
+        roads[i] = random.uniform(0, 1)
+
+    # Trading
+    trade = [0] * 20
+    for i in range(72):
+        roads[i] = random.uniform(0, 1)
+
+    # Ending turn
+    end_turn = [random.uniform(0, 1)]
+
+    output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads, 'EndTurn': end_turn, 'Trade': trade}
+    output_vector = settlements + cities + roads + trade + end_turn
+
+    return output_dictionary, output_vector

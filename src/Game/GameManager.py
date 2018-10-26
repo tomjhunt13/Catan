@@ -13,12 +13,13 @@ class GameManager:
         self.game_board = Board(number_of_players)
         self.game_board.generateBoard()
 
-        # Initialise power cards
         """
-        - number_of_power_cards is list of quantities of each type of power card 
+        Initialise power cards:
+        
+        - self.number_of_power_cards is list of quantities of each type of power card 
         - List is in order: [Knight, Take 2 Resources, Construct 2 Roads, Monopoly, Victory Point] 
         """
-        number_of_power_cards = [20, 3, 3, 3, 5]
+        self.number_of_power_cards = [20, 3, 3, 3, 5]
 
         # Initialise player states
         self.players = players
@@ -29,7 +30,10 @@ class GameManager:
             player.player_index = index
             player.game_manager = self
 
-        # Start game
+    def startGame(self):
+        """
+        Start game
+        """
         print("Starting Game")
         self.turn_counter = 0
         self.setup_players()
@@ -115,7 +119,7 @@ class GameManager:
 
     def buildSettlement(self, player, node_index):
         """
-        Checks whether player can build a settlement at given node index
+        Checks whether player can build a settlement at given node index and does so if can
         :param player: Player class instance
         :param node_index: Index of node which player wants to build on
         :return: Bool - can player build at desired location
@@ -139,10 +143,15 @@ class GameManager:
             if not ((player.resource_cards[0] > 0) and (player.resource_cards[2] > 0) and (player.resource_cards[3] > 0) and (player.resource_cards[4] > 0)):
                 return False
 
+        # Check 3
+        if player.building_pieces[1] == 0:
+            return False
 
+        # Check 4 - From node connectivity matrix, check if any node connected to desired build node is built on
+        if not self.game_board.connectedNodesBuiltOn(node_index):
+            return False
 
         # If gotten this far, settlement passes all checks:
-        
         # Update board
         self.game_board.nodes[node_index].settlement[player.player_index] = 1
 
