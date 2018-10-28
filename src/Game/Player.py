@@ -67,12 +67,10 @@ class Player:
                 break
 
 
-
-
-
-        #self.game_manager.buildSettlement(self, 3)
-
         print('Placing road')
+        self.game_manager.buildRoad(self, 4)
+
+        print()
 
 
 
@@ -103,6 +101,16 @@ class Player:
     def evaluateNetwork(self, input_vector):
         return self.move_function(input_vector)
 
+    def hasResources(self, resources):
+        """
+        Checks player has resources
+        :param resources: Vector of quantity of resources required in order l[Wheat, Stone, Brick, Sheep, Wood]
+        :return: Bool - True if player has enough resources
+        """
+        if (self.resource_cards[0] >= resources[0]) and (self.resource_cards[1] >= resources[1]) and (self.resource_cards[2] >= resources[2]) and (self.resource_cards[3] >= resources[3]) and (self.resource_cards[4] >= resources[4]):
+            return True
+
+        return False
 
 
 def randomAction(inputVector):

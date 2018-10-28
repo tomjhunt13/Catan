@@ -34,6 +34,9 @@ class Node:
         """
         self.ports = [0] * 6
 
+        # Edges which are connected to this node
+        self.connected_edges = []
+
     def isEmpty(self):
         """
         Checks if node has not been built on
@@ -59,8 +62,7 @@ class Edge:
 
         # Edge info
         self.ID = ID
-        self.node_1 = node_1
-        self.node_2 = node_2
+        self.nodes = [node_1, node_2]
 
         """
         Roads:
@@ -68,6 +70,17 @@ class Edge:
         - The index of the value refers to the player ID (player 1 is user)
         """
         self.road = [0] * number_of_players
+
+    def isEmpty(self):
+        """
+        Checks if edge has not been built on
+        :return: Bool - True if edge is empty
+        """
+        for i in range(len(self.road)):
+            if self.road[i] == 1:
+                return False
+
+        return True
 
 
 class Board:
@@ -77,7 +90,7 @@ class Board:
 
     def __init__(self, number_of_players):
         """
-        Initialises epresentation of the board
+        Initialises representation of the board
         :param number_of_players: number of players in game
         """
 
@@ -105,6 +118,10 @@ class Board:
         self.edges = [None] * len(edge_pairs)
         for edge_id in range(len(edge_pairs)):
             self.edges[edge_id] = Edge(edge_id, edge_pairs[edge_id][0], edge_pairs[edge_id][1], number_of_players)
+
+            # Add edges to list of connected edges on each node
+            self.nodes[edge_pairs[edge_id][0]].connected_edges.append(self.edges[edge_id])
+            self.nodes[edge_pairs[edge_id][1]].connected_edges.append(self.edges[edge_id])
 
         # Define connectivity between nodes and hexes
         # Each element is one hex and is a list of nodes that are connected to it
@@ -186,6 +203,7 @@ class Board:
     def connectedNodesBuiltOn(self, node_index):
         """
         Check if any nodes connected to node node_index are built on
+        :param node_index: Index of node to check
         :return: Bool - True if connected nodes are empty
         """
         node_connectivity = self.node_connectivity_matrix[node_index]
@@ -198,6 +216,37 @@ class Board:
 
         return True
 
+    def nodeHasRoad(self, node_index, player_index):
+        """
+        Checks a node is connected to an edge with a road built by player player_index
+        :param node_index: Index of node to check
+        :param player_index: Index of player to check road of
+        :return: Bool - True if any connected edges have a road built by player player_index on them
+        """
+        # For each connected edge check road
+        for edge in self.nodes[node_index].connected_edges:
+            if edge.road[player_index] == 1:
+                return True
+
+        return False
+
+    def edgeHasRoadOrSettlement(self, edge_index, player_index):
+        """
+        Checks an edge is connected at either end to another road, settlement or city belonging to player player_index
+        :param edge_index: Index of edge to check
+        :param player_index: Index of player to check connections of
+        :return: Bool - True if either connected node is connected
+        """
+        # Check if player has settlement or city on either node or if player has a road connected to either node
+        for node_index in range(2):
+            if self.nodes[self.edges[edge_index].nodes[node_index]].settlement[player_index] == 1 or self.nodes[self.edges[edge_index].nodes[node_index]].city[player_index] == 1:
+                return True
+
+            if self.nodeHasRoad(self.edges[edge_index].nodes[node_index], player_index):
+                return True
+
+        return False
+
 
 class Hex:
     def __init__(self, resource_index):
@@ -205,9 +254,11 @@ class Hex:
         self.dice_roll = 0
         self.probability = 0
 
+
 def probabilityOfRoll(number):
     a = [0, 0, 1.0/36.0, 2.0/36.0, 3.0/36.0, 4.0/36.0, 5.0/36.0, 6.0/36.0, 5.0/36.0, 4.0/36.0, 3.0/36.0, 2.0/36.0, 1.0/36.0]
     return a[number]
+
 
 def constructNodeConnectivityMatrix(edges):
     """
@@ -235,21 +286,3 @@ def constructNodeConnectivityMatrix(edges):
         connectivity_matrix[edge[1]][edge[0]] = 1
 
     return connectivity_matrix
-
-
-if __name__ == "__main__":
-
-    edges = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6],
-                       [0, 8], [2, 10], [4, 12], [6, 14],
-                       [7, 8], [8, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 15],
-                       [7, 17], [9, 19], [11, 21], [13, 23], [15, 25],
-                       [16, 17], [17, 18], [18, 19], [19, 20], [20, 21], [21, 22], [22, 23], [23, 24], [24, 25], [25, 26],
-                       [16, 27], [18, 29], [20, 31], [22, 33], [24, 35], [26, 37],
-                       [27, 28], [28, 29], [29, 30], [30, 31], [31, 32], [32, 33], [33, 34], [34, 35], [35, 36], [36, 37],
-                       [28, 38], [30, 40], [32, 42], [34, 44], [36, 46],
-                       [38, 39], [39, 40], [40, 41], [41, 42], [42, 43], [43, 44], [44, 45], [45, 46],
-                       [39, 47], [41, 49], [43, 51], [45, 53],
-                       [47, 48], [48, 49], [49, 50], [50, 51], [51, 52], [52, 53]]
-
-    connectivity_matrix = constructNodeConnectivityMatrix(edges)
-    print(connectivity_matrix)

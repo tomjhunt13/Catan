@@ -103,7 +103,6 @@ class GameManager:
     def count_points(self, player):
         return self.turn_counter
 
-
     def endTurn(self):
         """
         Checks whether player can end turn, if so end turn
@@ -132,6 +131,7 @@ class GameManager:
         2) Player has resources OR game is in setup phase
         3) Player has enough settlement pieces to place
         4) Node is at least two edges away from another city
+        5) Node is connected to a relevant road OR game is in setup phase
         """
 
         # Check 1
@@ -140,7 +140,7 @@ class GameManager:
 
         # Check 2
         if self.turn_counter != 0:
-            if not ((player.resource_cards[0] > 0) and (player.resource_cards[2] > 0) and (player.resource_cards[3] > 0) and (player.resource_cards[4] > 0)):
+            if not player.hasResources([1, 0, 1, 1, 1]):
                 return False
 
         # Check 3
@@ -150,6 +150,11 @@ class GameManager:
         # Check 4 - From node connectivity matrix, check if any node connected to desired build node is built on
         if not self.game_board.connectedNodesBuiltOn(node_index):
             return False
+
+        # Check 5
+        if self.turn_counter != 0:
+            if not self.game_board.nodeHasRoad(node_index, player.player_index):
+                return False
 
         # If gotten this far, settlement passes all checks:
         # Update board
@@ -162,8 +167,60 @@ class GameManager:
             player.resource_cards[3] -= 1
             player.resource_cards[4] -= 1
 
-        print('Player ' + str(player.player_index) + ' built settlement on node ' + str(node_index))
+        # Update settlement pieces
+        player.building_pieces[1] -= 1
 
+        print('Player ' + str(player.player_index) + ' built settlement on node ' + str(node_index))
+        return True
+
+    def buildRoad(self, player, edge_index):
+        """
+        Checks whether player can build a road on a given edge and does so if can
+        :param player: Player class instance
+        :param edge_index: Index of edge which player wants to build on
+        :return: Bool - can player build at desired location
+        """
+
+        """
+        Checks to perform:
+
+        1) Edge isn't occupied
+        2) Player has resources OR game is in setup phase
+        3) Player has enough road pieces to place
+        4) Either end of edge is connected to settlement, city or road built by player
+        """
+
+        # Check 1
+        if not self.game_board.edges[edge_index].isEmpty():
+            return False
+
+        # Check 2
+        if self.turn_counter != 0:
+            if not player.hasResources([0, 0, 1, 0, 1]):
+                return False
+
+        # Check 3
+        if player.building_pieces[0] == 0:
+            return False
+
+        # Check 4
+        if not self.game_board.edgeHasRoadOrSettlement(edge_index, player.player_index):
+            return False
+
+        # If gotten this far, settlement passes all checks:
+        # Update board
+        self.game_board.edges[edge_index].road[player.player_index] = 1
+
+        # Update resources in players hand
+        if self.turn_counter != 0:
+            player.resource_cards[2] -= 1
+            player.resource_cards[4] -= 1
+
+        # Update settlement pieces
+        player.building_pieces[0] -= 1
+
+        print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) + ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) + ' and ' + str(self.game_board.edges[edge_index].nodes[1]))
+        return True
 
     def isMoveValid(self):
         """
