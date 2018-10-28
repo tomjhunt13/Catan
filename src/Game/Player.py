@@ -66,15 +66,23 @@ class Player:
             if nodes_tested == 53:
                 break
 
-
         print('Placing road')
-        self.game_manager.buildRoad(self, 4)
+        # Evaluate network to get output vector and dictionary
+        network_output, vector_output = self.evaluateNetwork(self.assembleInputVector())
+        roads_vector = network_output['Roads']
 
-        print()
+        # Get list of connected edges which player has built settlement on
+        available_edges = self.game_manager.game_board.nodes[desired_node].connected_edges
 
+        # Find edge from available edges with highest value of roads vector
+        road_location = available_edges[0].ID
+        max_output = roads_vector[road_location]
+        for edge in available_edges:
+            if roads_vector[edge.ID] > max_output:
+                road_location = edge.ID
+                max_output = roads_vector[edge.ID]
 
-
-
+        self.game_manager.buildRoad(self, road_location)
 
     def action(self):
         network_output, vector_output = self.evaluateNetwork(self.assembleInputVector())
