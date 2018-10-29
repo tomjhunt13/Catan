@@ -31,7 +31,6 @@ class EmptyNodes(unittest.TestCase):
         """
         # Initialise board
         board = Board(4)
-        board.generateBoard()
 
         # Place settlement on node 31 and city on 32
         board.nodes[31].settlement = [1, 0, 0, 0]
@@ -52,7 +51,6 @@ class EmptyNodes(unittest.TestCase):
         """
         # Initialise board
         board = Board(4)
-        board.generateBoard()
 
         # Place settlement on node 31
         board.nodes[31].settlement = [1, 0, 0, 0]
@@ -70,7 +68,6 @@ class TestEdge(unittest.TestCase):
         """
         # Initialise board
         board = Board(4)
-        board.generateBoard()
 
         # Place road on edge 20
         board.edges[20].road = [1, 0, 0, 0]
@@ -87,7 +84,6 @@ class TestEdge(unittest.TestCase):
         """
         # Initialise board
         board = Board(4)
-        board.generateBoard()
 
         # Test unconnected edge
         self.assertEqual(board.edgeHasRoadOrSettlement(24, 2), False)
@@ -140,7 +136,6 @@ class NodeEdgeConnectivity(unittest.TestCase):
         """
         # Initialise board
         board = Board(4)
-        board.generateBoard()
 
         # Test node 30 with no connected edges built on
         self.assertEqual(board.nodeHasRoad(30, 2), False)

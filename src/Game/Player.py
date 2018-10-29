@@ -91,25 +91,25 @@ class Player:
         Wrapper around controller for player. Continuously makes decisions until pass decision made
         """
 
-        pass_action = False
-        while not pass_action:
-            pass_action = True
-            # Evaluate network and return decision
-            network_output, vector_output = self.evaluateNetwork(self.assembleInputVector())
+        # Evaluate network and return decision
+        network_output, vector_output = self.evaluateNetwork(self.assembleInputVector())
+
+        # Go through output from decision corresponding to highest output to lowest until valid move found
+        while True:
 
             # Find highest decision
+            key, element = getHighestAcrossDictionaries(network_output)
 
+            # Check for ending turn
+            if key == 'EndTurn':
+                return
+            else:
+                # If not ending turn, attempt action or set corresponding element to 0 if not possible
+                if not self.game_manager.action_functions[key](self, element):
+                    network_output[key][element] = 0
 
-        # Search for highest output that is a valid move
-        # for key, value in network_output
-
-    def getHighestAcrossDictionaries(self, output_dictionary):
-        """
-        Given a dictionary of lists, find the dictionary key and element index of the highest valued element in the dictionary
-        :param output_dictionary: Dictionary to search
-        :return: key - Key of dictionary with highest valued element, index - index of highest valued element in key
-        """
-        pass
+        # If not returned, call action again to make next decision
+        self.action()
 
     def endGame(self, points):
         pass
@@ -126,7 +126,6 @@ class Player:
         board_vector = self.game_manager.game_board.getInputValues()
         return board_vector + self.number_of_resource_cards + self.number_of_power_cards + self.power_cards + self.resource_cards
 
-
     def evaluateNetwork(self, input_vector):
         return self.move_function(input_vector)
 
@@ -140,6 +139,32 @@ class Player:
             return True
 
         return False
+
+
+def getHighestAcrossDictionaries(output_dictionary):
+    """
+    Given a dictionary of lists, find the dictionary key and element index of the highest valued element in the dictionary
+    :param output_dictionary: Dictionary to search
+    :return: key - Key of dictionary with highest valued element, index - index of highest valued element in key
+    """
+    max_key = None
+    element_index = None
+    current_max = 0
+
+    # Check through each key in dictionary
+    for key in output_dictionary.keys():
+
+        # Return index of max value in key
+        max_value_in_key = max(output_dictionary[key])
+        index_of_max_value_in_key = output_dictionary[key].index(max_value_in_key)
+
+        # If larger than existing largest, update max_key and element_index
+        if max_value_in_key > current_max:
+            max_key = key
+            element_index = index_of_max_value_in_key
+            current_max = max_value_in_key
+
+    return max_key, element_index
 
 
 def randomAction(inputVector):
@@ -169,7 +194,7 @@ def randomAction(inputVector):
     # Ending turn
     end_turn = [random.uniform(0, 1)]
 
-    output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads, 'EndTurn': end_turn, 'Trade': trade}
-    output_vector = settlements + cities + roads + trade + end_turn
+    output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads, 'EndTurn': end_turn}
+    output_vector = settlements + cities + roads + end_turn
 
     return output_dictionary, output_vector

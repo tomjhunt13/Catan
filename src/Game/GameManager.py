@@ -29,6 +29,11 @@ class GameManager:
             player.player_index = index
             player.game_manager = self
 
+        # self.action_functions is a dictionary storing references to the functions to perform actions
+        self.action_functions = {'Settlements': self.buildSettlement,
+                                 'Cities': self.buildCity,
+                                 'Roads': self.buildRoad}
+
     def startGame(self):
         """
         Start game
@@ -263,6 +268,61 @@ class GameManager:
 
         print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) + ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) + ' and ' + str(self.game_board.edges[edge_index].nodes[1]))
         return True
+
+    def buildCity(self, player, node_index):
+        pass
+        # """
+        # Checks whether player can build a road on a given edge and does so if can
+        #         :param player: Player class instance
+        #         :param edge_index: Index of edge which player wants to build on
+        #         :return: Bool - can player build at desired location
+        #         """
+        #
+        # """
+        # Checks to perform:
+        #
+        # 1) Edge isn't occupied
+        # 2) Player has resources OR game is in setup phase
+        # 3) Player has enough road pieces to place
+        # 4) Either end of edge is connected to settlement, city or road built by player
+        # """
+        #
+        # # Check 1
+        # if not self.game_board.edges[edge_index].isEmpty():
+        #     return False
+        #
+        # # Check 2
+        # if self.turn_counter != 0:
+        #     if not player.hasResources([0, 0, 1, 0, 1]):
+        #         return False
+        #
+        # # Check 3
+        # if player.building_pieces[0] == 0:
+        #     return False
+        #
+        # # Check 4
+        # if not self.game_board.edgeHasRoadOrSettlement(edge_index, player.player_index):
+        #     return False
+        #
+        # # If gotten this far, settlement passes all checks:
+        # # Update board
+        # self.game_board.edges[edge_index].road[player.player_index] = 1
+        #
+        # # Update resources in players hand
+        # if self.turn_counter != 0:
+        #     player.resource_cards[2] -= 1
+        #     player.resource_cards[4] -= 1
+        #
+        # # Update settlement pieces
+        # player.building_pieces[0] -= 1
+        #
+        # print('Player ' + str(player.player_index) + ' built road on edge ' + str(
+        #     edge_index) + ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) + ' and ' + str(
+        #     self.game_board.edges[edge_index].nodes[1]))
+        # return True
+
+
+
 
 
 def loopingIterator(current_index, increment=True, players=4):
