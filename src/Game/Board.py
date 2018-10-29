@@ -145,34 +145,37 @@ class Board:
                                       [41, 42, 43, 49, 50, 51],
                                       [43, 44, 45, 51, 52, 53]]
 
-    def generateBoard(self):
-        """
-        Function to initialise all resources and ports on board
-        """
         # Create all hexes - resource order is [ Wheat, Stone, Brick, Sheep, Wood ]
         number_of_resource = [4, 3, 3, 4, 4]
-        resources = []
+        self.hexes = []
         for resource_type in range(len(number_of_resource)):
             for i in range(number_of_resource[resource_type]):
-                resources.append(Hex(resource_type))
-        resources.append(Hex(-1))
+                self.hexes.append(Hex(0, resource_type))
+        self.hexes.append(Hex(0, -1))
 
         # Shuffle list
-        shuffle(resources)
+        shuffle(self.hexes)
 
         # Choose dice roles !!!Currently chosen at random but should implement proper order
         number_markers = [2, 5, 4, 6, 3, 9, 8, 11, 11, 10, 6, 3, 8, 4, 8, 10, 11, 12]
+        self.hex_dice_roll_list = [None] * 13
         shuffle(number_markers)
         hex_index = 0
-        for hexagon in resources:
+        for hexagon in self.hexes:
+            hexagon.ID = hex_index
             if hexagon.resource_index != -1:
                 hexagon.dice_roll = number_markers[hex_index]
                 hexagon.probability = probabilityOfRoll(number_markers[hex_index])
 
+                if not self.hex_dice_roll_list[number_markers[hex_index]]:
+                    self.hex_dice_roll_list[number_markers[hex_index]] = [hexagon]
+                else:
+                    self.hex_dice_roll_list[number_markers[hex_index]].append(hexagon)
+
                 # Update connected nodes
                 for node in self.hex_node_connectivity[hex_index]:
+                    self.nodes[node].resource_dice_rolls[hexagon.resource_index].append(hexagon.dice_roll)
                     if hexagon.dice_roll not in self.nodes[node].resource_dice_rolls[hexagon.resource_index]:
-                        self.nodes[node].resource_dice_rolls[hexagon.resource_index].append(hexagon.dice_roll)
                         self.nodes[node].resource_probabilities[hexagon.resource_index] += hexagon.probability
                 hex_index += 1
 
@@ -249,7 +252,8 @@ class Board:
 
 
 class Hex:
-    def __init__(self, resource_index):
+    def __init__(self, ID, resource_index):
+        self.ID = ID
         self.resource_index = resource_index
         self.dice_roll = 0
         self.probability = 0

@@ -12,10 +12,9 @@ class Player:
         self.game_manager = None
         self.move_function = move_function
 
-        # Information known about other players
-        self.number_of_resource_cards = [0, 0, 0]
-        self.number_of_power_cards = [0, 0, 0]
-
+        # Information known about other players (ignore element corresponding to self)
+        self.number_of_resource_cards = [0, 0, 0, 0]
+        self.number_of_power_cards = [0, 0, 0, 0]
 
         """
         Power Cards:
@@ -45,6 +44,7 @@ class Player:
     def setup(self):
         """
         Defines player logic for set-up phase of game (Turn 0)
+        :return: node_index of settlement, edge_index of road
         """
         print('\nPlayer ' + str(self.player_index) + ':')
         print('Placing settlement')
@@ -84,11 +84,32 @@ class Player:
 
         self.game_manager.buildRoad(self, road_location)
 
+        return desired_node, road_location
+
     def action(self):
-        network_output, vector_output = self.evaluateNetwork(self.assembleInputVector())
+        """
+        Wrapper around controller for player. Continuously makes decisions until pass decision made
+        """
+
+        pass_action = False
+        while not pass_action:
+            pass_action = True
+            # Evaluate network and return decision
+            network_output, vector_output = self.evaluateNetwork(self.assembleInputVector())
+
+            # Find highest decision
+
 
         # Search for highest output that is a valid move
         # for key, value in network_output
+
+    def getHighestAcrossDictionaries(self, output_dictionary):
+        """
+        Given a dictionary of lists, find the dictionary key and element index of the highest valued element in the dictionary
+        :param output_dictionary: Dictionary to search
+        :return: key - Key of dictionary with highest valued element, index - index of highest valued element in key
+        """
+        pass
 
     def endGame(self, points):
         pass
