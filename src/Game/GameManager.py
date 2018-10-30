@@ -148,6 +148,12 @@ class GameManager:
         self.turn()
 
     def count_points(self, player):
+        """
+        Counts number of points player has
+        :param player: Player to count points of
+        :return: Number of points player has
+        """
+
         return self.turn_counter
 
     def endTurn(self):
@@ -312,7 +318,23 @@ class GameManager:
         print('Player ' + str(player.player_index) + ' built a city on node ' + str(node_index))
         return True
 
+    def useKnightCard(self):
+        pass
 
+    def useTwoRoadsCard(self):
+        pass
+
+    def useMonopolyCard(self):
+        pass
+
+    def useVictoryPointCard(self):
+        pass
+
+    def useTakeTwoResourcesCard(self):
+        pass
+
+    def buyPowerCard(self):
+        pass
 
 
 
