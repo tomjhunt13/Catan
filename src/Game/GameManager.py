@@ -79,6 +79,7 @@ class GameManager:
                 self.players[player_index].resource_cards[resource_index] = len(self.game_board.nodes[settlement_node[player_index]].resource_dice_rolls[resource_index])
 
         self.player_turn = int(self.starting_player)
+        self.turn_counter = 1
         self.turn()
 
     def turn(self):
@@ -134,7 +135,7 @@ class GameManager:
         # Check if player has won
         for index, player in enumerate(self.players):
             self.points[index] = self.count_points(player)
-            if self.points[index] == 100:
+            if self.points[index] == 10000:
                 print("Player " + str(self.player_turn) + " has won!")
                 player.endGame(self.points[index])
                 return
