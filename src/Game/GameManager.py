@@ -80,7 +80,27 @@ class GameManager:
 
         self.player_turn = int(self.starting_player)
         self.turn_counter = 1
-        self.turn()
+        self.turnManager()
+
+    def turnManager(self):
+        """
+        Outer loop for turn function
+        """
+        game_ended = False
+
+        while not game_ended:
+
+            # Take turn
+            self.turn()
+
+            # Check game has ended
+            if self.turn_counter == 50:
+                game_ended = True
+
+            # Increment turn counter
+            self.player_turn = loopingIterator(self.player_turn)
+            if self.player_turn == self.starting_player:
+                self.turn_counter += 1
 
     def turn(self):
         """
@@ -92,7 +112,7 @@ class GameManager:
         4) If game hasn't ended increment player counter
         """
 
-        print('\nRound: ' + str(self.turn_counter) + ', Player: ' + str(self.turn_counter))
+        print('\nRound: ' + str(self.turn_counter) + ', Player: ' + str(self.player_turn))
 
         # Step 1: Roll die and give out resources
         dice_roll = rollDice(2)
@@ -130,22 +150,6 @@ class GameManager:
 
         # Step 2: Make current player perform actions until they pass go
         self.players[self.player_turn].action()
-        self.turn_counter += 1
-
-        # Check if player has won
-        for index, player in enumerate(self.players):
-            self.points[index] = self.count_points(player)
-            if self.points[index] == 10000:
-                print("Player " + str(self.player_turn) + " has won!")
-                player.endGame(self.points[index])
-                return
-
-        if self.player_turn != 3:
-            self.player_turn += 1
-        else:
-            self.player_turn = 0
-
-        self.turn()
 
     def count_points(self, player):
         """
@@ -224,6 +228,8 @@ class GameManager:
         # Update settlement pieces
         player.building_pieces[1] -= 1
 
+        # Check settlement hasn't broken chain of roads
+
         print('Player ' + str(player.player_index) + ' built settlement on node ' + str(node_index))
         return True
 
@@ -272,6 +278,8 @@ class GameManager:
 
         # Update road pieces
         player.building_pieces[0] -= 1
+
+        # Check longest road
 
         print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) + ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) + ' and ' + str(self.game_board.edges[edge_index].nodes[1]))
         return True

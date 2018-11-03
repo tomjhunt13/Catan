@@ -18,7 +18,7 @@ class Player:
 
         """
         Power Cards:
-        
+
         - self.power_cards is a list of number of each type of card
          - List order is: [Knight, Take 2 Resources, Construct 2 Roads, Monopoly, Victory Point]]
         """
@@ -26,7 +26,7 @@ class Player:
 
         """
         Resources:
-        
+
         - self.resource_cards is a list of number of each type of class
         - list order is: [Wheat, Stone, Brick, Sheep, Wood]
         - self.resource_dice_rolls is a list of which rolls get each resource
@@ -40,6 +40,12 @@ class Player:
          - List is in order: [Road, Settlement, City] 
         """
         self.building_pieces = [15, 5, 4]
+
+        """
+        Road connectivity matrix:
+        
+        Gets updated everytime a 
+        """
 
     def setup(self):
         """
@@ -135,7 +141,9 @@ class Player:
         :param resources: Vector of quantity of resources required in order l[Wheat, Stone, Brick, Sheep, Wood]
         :return: Bool - True if player has enough resources
         """
-        if (self.resource_cards[0] >= resources[0]) and (self.resource_cards[1] >= resources[1]) and (self.resource_cards[2] >= resources[2]) and (self.resource_cards[3] >= resources[3]) and (self.resource_cards[4] >= resources[4]):
+        if (self.resource_cards[0] >= resources[0]) and (self.resource_cards[1] >= resources[1]) and (
+                self.resource_cards[2] >= resources[2]) and (self.resource_cards[3] >= resources[3]) and (
+                self.resource_cards[4] >= resources[4]):
             return True
 
         return False

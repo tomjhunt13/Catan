@@ -1,3 +1,5 @@
+import time
+
 from src.Game.GameManager import *
 from src.Game.Player import *
 
@@ -7,7 +9,9 @@ player_3 = Player(randomAction)
 player_4 = Player(randomAction)
 
 game_manager = GameManager([player_1, player_2, player_3, player_4])
+
+start_time = time.time()
 game_manager.startGame()
+end_time = time.time()
 
-
-print(game_manager.player_turn)
+print(end_time - start_time)

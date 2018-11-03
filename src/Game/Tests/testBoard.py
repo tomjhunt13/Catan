@@ -148,6 +148,40 @@ class NodeEdgeConnectivity(unittest.TestCase):
         board.nodes[30].connected_edges[0].road = [1, 0, 0, 0]
         self.assertEqual(board.nodeHasRoad(30, 0), True)
 
+class testGetLengthOfRoad(unittest.TestCase):
+    """
+    Test Board getLengthOfRoad function
+    """
+    def noRoads(self):
+        # Initialise board
+        board = Board(4)
+        self.assertEqual(board.getLengthOfRoad(0, 0), 0)
+
+    def oneChain(self):
+        board = Board(4)
+
+        # 1 road on edge 13
+        board.edges[13].road = [1, 0, 0, 0]
+        self.assertEqual(board.getLengthOfRoad(13, 0), 1)
+
+        # Roads on edge 13 and connected edge 7
+        board.edges[7].road = [1, 0, 0, 0]
+        self.assertEqual(board.getLengthOfRoad(13, 0), 2)
+
+    def oneBranch(self):
+        board = Board(4)
+
+        # Roads on edges 13, 7 and 12 forming star around node 10
+        board.edges[13].road = [1, 0, 0, 0]
+        board.edges[7].road = [1, 0, 0, 0]
+        board.edges[12].road = [1, 0, 0, 0]
+        self.assertEqual(board.getLengthOfRoad(13, 0), 2)
+
+
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
