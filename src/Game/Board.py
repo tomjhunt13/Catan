@@ -1,7 +1,8 @@
 from random import shuffle
+from src.Game.Graph import *
 
 
-class Node:
+class BoardNode:
     def __init__(self, ID, number_of_players):
         """
         Class to represent node on board graph
@@ -49,7 +50,7 @@ class Node:
         return True
 
 
-class Edge:
+class BoardEdge:
     def __init__(self, ID, node_1, node_2, number_of_players):
         """
         Class to represent edge on board graph
@@ -97,7 +98,7 @@ class Board:
         number_of_nodes = 54
         self.nodes = [None] * number_of_nodes
         for node_id in range(number_of_nodes):
-            self.nodes[node_id] = Node(node_id, number_of_players)
+            self.nodes[node_id] = BoardNode(node_id, number_of_players)
 
         # Initialise edges
         edge_pairs = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6],
@@ -116,7 +117,7 @@ class Board:
 
         self.edges = [None] * len(edge_pairs)
         for edge_id in range(len(edge_pairs)):
-            self.edges[edge_id] = Edge(edge_id, edge_pairs[edge_id][0], edge_pairs[edge_id][1], number_of_players)
+            self.edges[edge_id] = BoardEdge(edge_id, edge_pairs[edge_id][0], edge_pairs[edge_id][1], number_of_players)
 
             # Add edges to list of connected edges on each node
             self.nodes[edge_pairs[edge_id][0]].connected_edges.append(self.edges[edge_id])
@@ -280,31 +281,3 @@ class Hex:
 def probabilityOfRoll(number):
     a = [0, 0, 1.0/36.0, 2.0/36.0, 3.0/36.0, 4.0/36.0, 5.0/36.0, 6.0/36.0, 5.0/36.0, 4.0/36.0, 3.0/36.0, 2.0/36.0, 1.0/36.0]
     return a[number]
-
-
-def constructNodeConnectivityMatrix(edges):
-    """
-    Calculates Matrix of connectivity for graph given list of edges
-    :param edges: List of edges in form: [[node 0, node 1], [node 0, node 1],...]
-    :return: Matrix of connectivity. For element in row i, column j, a value of 1 represents a connection between node i and node j
-    """
-
-    # First get a list of nodes in graph
-    nodes = []
-    for edge in edges:
-        for node in range(2):
-            if edge[node] not in nodes:
-                nodes.append(edge[node])
-
-
-    # Initialise empty connectivity matrix
-    connectivity_matrix = []
-    for row in range(len(nodes)):
-        connectivity_matrix.append([0] * len(nodes))
-
-    # Iterate over each edge. Add edge to matrix
-    for edge in edges:
-        connectivity_matrix[edge[0]][edge[1]] = 1
-        connectivity_matrix[edge[1]][edge[0]] = 1
-
-    return connectivity_matrix

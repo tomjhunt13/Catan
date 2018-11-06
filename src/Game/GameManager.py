@@ -1,6 +1,7 @@
 import random
 
 from src.Game.Board import *
+from src.Game.RoadNetwork import *
 
 """
 GameManager class to store and manage rules of game
@@ -25,9 +26,14 @@ class GameManager:
         self.player_turn = 0
         self.starting_player = 0
         self.points = [0, 0, 0, 0]
+        self.road_network = [None] * 4
+        self.road_lengths = [0, 0, 0, 0]
         for index, player in enumerate(self.players):
             player.player_index = index
             player.game_manager = self
+
+            # Initialise player road network
+            self.road_network[index] = RoadNetwork(self.game_board)
 
         # self.action_functions is a dictionary storing references to the functions to perform actions
         self.action_functions = {'Settlements': self.buildSettlement,
@@ -279,7 +285,12 @@ class GameManager:
         # Update road pieces
         player.building_pieces[0] -= 1
 
-        # Check longest road
+        # Update player RoadNetwork
+        self.road_network[player.player_index].addRoad(edge_index)
+
+        # Check if new road is longest road
+        player_road_length, path = self.road_network[player.player_index].longestContinousPath()
+        self.road_lengths[player.player_index] = player_road_length
 
         print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) + ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) + ' and ' + str(self.game_board.edges[edge_index].nodes[1]))
         return True

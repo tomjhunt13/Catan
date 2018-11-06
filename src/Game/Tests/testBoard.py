@@ -2,30 +2,8 @@ import unittest
 
 from src.Game.Board import *
 
-class Connectivity(unittest.TestCase):
-
-    def testConstructNodeConnectivityMatrix(self):
-        """
-        Test that connectivity matrix is correct
-        """
-        # Triangular graph
-        edges = [[0, 1], [1, 2], [0, 2]]
-        expected_matrix = [[0, 1, 1], [1, 0, 1], [1, 1, 0]]
-        self.assertEqual(constructNodeConnectivityMatrix(edges), expected_matrix)
-
-        # Triangular graph with one edge missing
-        edges = [[0, 1], [1, 2]]
-        expected_matrix = [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
-        self.assertEqual(constructNodeConnectivityMatrix(edges), expected_matrix)
-
-        # 1 node to 4 others
-        edges = [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5]]
-        expected_matrix = [[0, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0]]
-        self.assertEqual(constructNodeConnectivityMatrix(edges), expected_matrix)
-
-
 class EmptyNodes(unittest.TestCase):
-    def testIsEmpty(self):
+    def test_IsEmpty(self):
         """
         Test Node isEmpty function
         """
@@ -45,7 +23,7 @@ class EmptyNodes(unittest.TestCase):
         # Test node 40 is empty
         self.assertEqual(board.nodes[40].isEmpty(), True)
 
-    def testConnectedNodesBuiltOn(self):
+    def test_ConnectedNodesBuiltOn(self):
         """
         Test function to check connected nodes not built on
         """
@@ -62,7 +40,7 @@ class EmptyNodes(unittest.TestCase):
         self.assertEqual(board.connectedNodesBuiltOn(33), True)
 
 class TestEdge(unittest.TestCase):
-    def testIsEmpty(self):
+    def test_IsEmpty(self):
         """
         Test edge isEmpty function
         """
@@ -78,7 +56,7 @@ class TestEdge(unittest.TestCase):
         # Test node 32 is empty
         self.assertEqual(board.nodes[32].isEmpty(), True)
 
-    def testEdgeHasRoadOrSettlement(self):
+    def test_EdgeHasRoadOrSettlement(self):
         """
         Test edgeHasRoadOrSettlement function of board
         """
@@ -130,7 +108,7 @@ class TestEdge(unittest.TestCase):
 
 
 class NodeEdgeConnectivity(unittest.TestCase):
-    def testNodeHasRoad(self):
+    def test_NodeHasRoad(self):
         """
         Test Board nodeHasRoad function
         """
@@ -147,37 +125,6 @@ class NodeEdgeConnectivity(unittest.TestCase):
         # Test node 30 with one connected built on but correct player
         board.nodes[30].connected_edges[0].road = [1, 0, 0, 0]
         self.assertEqual(board.nodeHasRoad(30, 0), True)
-
-class testGetLengthOfRoad(unittest.TestCase):
-    """
-    Test Board getLengthOfRoad function
-    """
-    def noRoads(self):
-        # Initialise board
-        board = Board(4)
-        self.assertEqual(board.getLengthOfRoad(0, 0), 0)
-
-    def oneChain(self):
-        board = Board(4)
-
-        # 1 road on edge 13
-        board.edges[13].road = [1, 0, 0, 0]
-        self.assertEqual(board.getLengthOfRoad(13, 0), 1)
-
-        # Roads on edge 13 and connected edge 7
-        board.edges[7].road = [1, 0, 0, 0]
-        self.assertEqual(board.getLengthOfRoad(13, 0), 2)
-
-    def oneBranch(self):
-        board = Board(4)
-
-        # Roads on edges 13, 7 and 12 forming star around node 10
-        board.edges[13].road = [1, 0, 0, 0]
-        board.edges[7].road = [1, 0, 0, 0]
-        board.edges[12].road = [1, 0, 0, 0]
-        self.assertEqual(board.getLengthOfRoad(13, 0), 2)
-
-
 
 
 
