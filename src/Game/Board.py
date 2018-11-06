@@ -250,25 +250,6 @@ class Board:
 
         return False
 
-    def getLengthOfRoad(self, edge_index, player_index):
-        """
-        Gets length of continuous road connected to edge edge_index
-        :param edge_index: Index of edge to calculate road length of
-        :return:
-        """
-
-        # First search out from edge
-
-        self._recursiveRoadLength(edge_index, self.edges[edge_index].nodes[0], player_index)
-
-
-
-    def _recursiveRoadLength(self, edge_index, node_index, player_index):
-
-        # Check player player_index has roads connected to node node_index that isn't edge edge_index
-        for edge in self.nodes[node_index].connected_edges:
-
-            print(edge)
 
 class Hex:
     def __init__(self, ID, resource_index):

@@ -33,7 +33,7 @@ class GameManager:
             player.game_manager = self
 
             # Initialise player road network
-            self.road_network[index] = RoadNetwork(self.game_board)
+            self.road_network[index] = RoadNetwork(self.game_board, index)
 
         # self.action_functions is a dictionary storing references to the functions to perform actions
         self.action_functions = {'Settlements': self.buildSettlement,
@@ -292,7 +292,11 @@ class GameManager:
         player_road_length, path = self.road_network[player.player_index].longestContinousPath()
         self.road_lengths[player.player_index] = player_road_length
 
-        print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) + ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) + ' and ' + str(self.game_board.edges[edge_index].nodes[1]))
+        print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) +
+              ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) +
+              ' and ' + str(self.game_board.edges[edge_index].nodes[1]) +
+              '. Players longest road: ' + str(player_road_length))
+
         return True
 
     def buildCity(self, player, node_index):
