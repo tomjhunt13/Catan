@@ -1,5 +1,4 @@
 import random
-import time
 
 from src.Game.Board import *
 from src.Game.RoadNetwork import *
@@ -13,6 +12,11 @@ class GameManager:
         # Initialise Board
         number_of_players = 4
         self.game_board = Board(number_of_players)
+
+        # Start off robber on desert tile
+        for index, hex in enumerate(self.game_board.hexes):
+            if hex.resource_index == -1:
+                self.robber_location = index
 
         """
         Initialise power cards:
@@ -101,7 +105,7 @@ class GameManager:
             self.turn()
 
             # Check game has ended
-            if self.turn_counter == 5000:
+            if self.turn_counter == 50:
                 game_ended = True
 
             # Increment turn counter
@@ -130,33 +134,75 @@ class GameManager:
             # Get corresponding hexes on board
             for hex in self.game_board.hex_dice_roll_list[dice_roll]:
 
-                # Get all nodes connected to this hex
-                for node_index in self.game_board.hex_node_connectivity[hex.ID]:
+                # Check hex isn't blocked by robber
+                if hex.ID != self.robber_location:
+                    
+                    # Get all nodes connected to this hex
+                    for node_index in self.game_board.hex_node_connectivity[hex.ID]:
 
-                    # For each player check if node built on
-                    for player_index in range(4):
+                        # For each player check if node built on
+                        for player_index in range(4):
 
-                        # Check player has built on node
-                        node_resource_contribution = 0
-                        if self.game_board.nodes[node_index].settlement[player_index] == 1:
-                            node_resource_contribution = 1
-                        elif self.game_board.nodes[node_index].city[player_index] == 1:
-                            node_resource_contribution = 2
+                            # Check player has built on node
+                            node_resource_contribution = 0
+                            if self.game_board.nodes[node_index].settlement[player_index] == 1:
+                                node_resource_contribution = 1
+                            elif self.game_board.nodes[node_index].city[player_index] == 1:
+                                node_resource_contribution = 2
 
-                        self.players[player_index].resource_cards[hex.resource_index] += node_resource_contribution
-                        if node_resource_contribution != 0:
-                            print('Player ' + str(player_index) + ' has received ' + str(node_resource_contribution) + ' of resource type ' + str(hex.resource_index) + ' from node ' + str(node_index))
+                            self.players[player_index].resource_cards[hex.resource_index] += node_resource_contribution
+                            if node_resource_contribution != 0:
+                                print('Player ' + str(player_index) + ' has received ' + str(node_resource_contribution) + ' of resource type ' + str(hex.resource_index) + ' from node ' + str(node_index))
 
-                            # Update all other players that player player_index has received resources
-                            for i in range(4):
-                                if i != player_index:
-                                    self.players[i].number_of_resource_cards[player_index] += node_resource_contribution
+                                # Update all other players that player player_index has received resources
+                                for i in range(4):
+                                    if i != player_index:
+                                        self.players[i].number_of_resource_cards[player_index] += node_resource_contribution
         else:
             # 7 has been rolled, go into robber state
-            print('Robber')
+            self.robber()
 
         # Step 2: Make current player perform actions until they pass go
         self.players[self.player_turn].action()
+
+    def robber(self):
+        """
+        Manages event where 7 is rolled
+        """
+
+        print('Robber')
+
+        # First go through each player and if they have 8 or more cards, tell them to discard half
+        for player in self.players:
+            if sum(player.resource_cards) > 7:
+                player.discardHalfCards()
+
+        # Next current player must move robber
+        self.players[self.player_turn].moveRobber()
+        print('Player ' + str(self.player_turn) + ' moved robber to hex: ' + str(self.robber_location))
+
+        # Get list of all players with connected settlements
+        players_to_steal_from = []
+        for node in self.game_board.hex_node_connectivity[self.robber_location]:
+            for index, player_has_settlement in enumerate(self.game_board.nodes[node].settlement):
+                if player_has_settlement == 1 and index != self.player_turn:
+                    if index not in players_to_steal_from:
+                        players_to_steal_from.append(index)
+
+        # Steal resource card from a player with a connected settlement to hex
+        if len(players_to_steal_from) != 0:
+            chosen_player = self.players[self.player_turn].choosePlayerToStealFrom(players_to_steal_from)
+
+            # Get random resource from player
+            num_cards = sum(self.players[chosen_player].resource_cards)
+            cards_to_take = random.randint(0, num_cards - 1)
+
+            for resource_type in range(5):
+                cards_to_take -= self.players[chosen_player].resource_cards[resource_type]
+                if cards_to_take < 0:
+                    self.players[chosen_player].resource_cards[resource_type] -= 1
+                    print('Player ' + str(self.player_turn) + ' stole resource type ' + str(resource_type) + ' from player ' + str(chosen_player))
+                    break
 
     def count_points(self, player):
         """
@@ -293,10 +339,8 @@ class GameManager:
         self.road_network[player.player_index].addRoad(edge_index)
 
         # Check if new road is longest road
-        start_time = time.time()
         player_road_length, path = self.road_network[player.player_index].longestContinousPath()
         self.road_lengths[player.player_index] = player_road_length
-        print('Time = ' + str(time.time() - start_time))
 
         print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) +
               ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) +

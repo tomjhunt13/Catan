@@ -1,4 +1,5 @@
 import random
+import math
 
 
 class Player:
@@ -147,6 +148,43 @@ class Player:
             return True
 
         return False
+
+    def discardHalfCards(self):
+        """
+        Currently discards random choice of cards
+        """
+
+        # Get number of cards to discard
+        total_cards_in_hand = sum(self.resource_cards)
+        number_to_discard = math.ceil(total_cards_in_hand / 2.0)
+
+        # Discard cards
+        while number_to_discard != 0:
+            index_to_discard = random.randint(0, 4)
+            if self.resource_cards[index_to_discard] != 0:
+                self.resource_cards[index_to_discard] -= 1
+                number_to_discard -= 1
+
+    def moveRobber(self):
+        """
+        Moves robber and takes card from player
+        """
+
+        # Now random!
+        self.game_manager.robber_location = random.randint(0, 17)
+
+    def choosePlayerToStealFrom(self, list_of_players):
+        """
+        Choose which player to steal from when player must choose to steal resource card from another player (ie robber)
+        """
+
+        # Currently random
+        random.shuffle(list_of_players)
+        return list_of_players[0]
+
+
+
+
 
 
 def getHighestAcrossDictionaries(output_dictionary):

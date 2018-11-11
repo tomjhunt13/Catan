@@ -19,3 +19,5 @@
 - _Board Setup_: Implement proper ordering of dice roll counters on board in setup
 
 - _Development Cards_: Implement all development cards    
+
+- _Robber_: Add in robber
