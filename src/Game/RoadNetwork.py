@@ -64,12 +64,20 @@ class RoadNetwork(Graph):
 
                     # Get edge object
                     for edge in self.edges:
-
                         if edge.nodes == [index, graph_nodes[0]] or edge.nodes == [graph_nodes[0], index]:
+                            # Update edge with new node
                             edge.nodes = [new_id, index]
 
                 connection_index += 1
-                self.node_connectivity = constructNodeConnectivityMatrix(self.listEdgeNodeIndices())
 
-        # If another player builds a settlement at node node_index which breaks the road network, add another node to graph to represent disconnect
+        # Update node connectivity
+        self.node_connectivity = constructNodeConnectivityMatrix(self.listEdgeNodeIndices())
+
+        print('Player ' + str(self.player_index) + '\'s RoadNetwork broken at node ' + str(board_node_index))
+
+
+
+
+
+
 

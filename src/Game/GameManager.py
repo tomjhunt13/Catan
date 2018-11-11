@@ -101,7 +101,7 @@ class GameManager:
             self.turn()
 
             # Check game has ended
-            if self.turn_counter == 50:
+            if self.turn_counter == 5000:
                 game_ended = True
 
             # Increment turn counter
@@ -235,7 +235,10 @@ class GameManager:
         # Update settlement pieces
         player.building_pieces[1] -= 1
 
-        # Check settlement hasn't broken chain of roads
+        # Break road network for each player apart from player player_index
+        for player_i in range(4):
+            if player_i != player.player_index:
+                self.road_network[player_i].breakRoadAtNode(node_index)
 
         print('Player ' + str(player.player_index) + ' built settlement on node ' + str(node_index))
         return True

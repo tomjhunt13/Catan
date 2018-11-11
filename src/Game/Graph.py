@@ -30,9 +30,6 @@ class Graph:
         # Node connectivity matrix
         self.node_connectivity = constructNodeConnectivityMatrix(self.edges)
 
-        # Node - edge connectivity map
-        # self.node_edge_connectivity = None
-
     def appendNodeToGraph(self, variable_dictionary={}):
         """
         Adds new node to graph with unique index equal to largest index + 1
@@ -41,11 +38,6 @@ class Graph:
         """
         index = len(self.nodes)
         self.nodes.append(Node(variable_dictionary))
-
-        # if self.node_edge_connectivity == None:
-        #     self.node_edge_connectivity = [[None]]
-        # else:
-        #     self.node_edge_connectivity.append([None])
 
         return index
 
@@ -63,13 +55,6 @@ class Graph:
 
         # Update graph connectivity matrix
         self.node_connectivity = constructNodeConnectivityMatrix(self.listEdgeNodeIndices())
-
-        # # Update node - edge connectivity map
-        # for index in range(2):
-        #     if self.node_edge_connectivity[nodes[index]] == [None]:
-        #         self.node_edge_connectivity[nodes[index]] = [index]
-        #     else:
-        #         self.node_edge_connectivity[nodes[index]].append(index)
 
         return index
 
