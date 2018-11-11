@@ -30,6 +30,9 @@ class Graph:
         # Node connectivity matrix
         self.node_connectivity = constructNodeConnectivityMatrix(self.edges)
 
+        # Node - edge connectivity map
+        # self.node_edge_connectivity = None
+
     def appendNodeToGraph(self, variable_dictionary={}):
         """
         Adds new node to graph with unique index equal to largest index + 1
@@ -38,6 +41,11 @@ class Graph:
         """
         index = len(self.nodes)
         self.nodes.append(Node(variable_dictionary))
+
+        # if self.node_edge_connectivity == None:
+        #     self.node_edge_connectivity = [[None]]
+        # else:
+        #     self.node_edge_connectivity.append([None])
 
         return index
 
@@ -55,6 +63,13 @@ class Graph:
 
         # Update graph connectivity matrix
         self.node_connectivity = constructNodeConnectivityMatrix(self.listEdgeNodeIndices())
+
+        # # Update node - edge connectivity map
+        # for index in range(2):
+        #     if self.node_edge_connectivity[nodes[index]] == [None]:
+        #         self.node_edge_connectivity[nodes[index]] = [index]
+        #     else:
+        #         self.node_edge_connectivity[nodes[index]].append(index)
 
         return index
 
@@ -74,19 +89,8 @@ class Graph:
         Calculates longest continuous path in graph
         :return: Length of path, List of edges which make path
         """
-        # First look for every node with 1 or 3 connected edges
-        starting_nodes = []
-        for index, node in enumerate(self.node_connectivity):
-            # If node has an odd number of edges store it in list
-            if sum(node) == 1 or sum(node) == 3:
-                starting_nodes.append(index)
-
-        # If there are no nodes with choose arbitrary node
-        if not starting_nodes:
-            # Check any nodes exist in graph
-            if not self.nodes:
-                return 0, []
-            starting_nodes = [0]
+        # Start recursion from each node
+        starting_nodes = range(len(self.nodes))
 
         # Recursively search through connected edges from each node in starting nodes. Store maximum combinations
         max_length = 0
@@ -99,7 +103,6 @@ class Graph:
                 max_path = path
 
         return max_length, max_path
-
 
     def _recursivePathLength(self, current_node, visited_edges, current_longest_path):
         """

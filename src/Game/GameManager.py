@@ -1,4 +1,5 @@
 import random
+import time
 
 from src.Game.Board import *
 from src.Game.RoadNetwork import *
@@ -289,8 +290,10 @@ class GameManager:
         self.road_network[player.player_index].addRoad(edge_index)
 
         # Check if new road is longest road
+        start_time = time.time()
         player_road_length, path = self.road_network[player.player_index].longestContinousPath()
         self.road_lengths[player.player_index] = player_road_length
+        print('Time = ' + str(time.time() - start_time))
 
         print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) +
               ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) +

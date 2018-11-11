@@ -5,7 +5,7 @@ from src.Game.Graph import *
 
 class TestGraph(unittest.TestCase):
 
-    def test_ConstructNodeConnectivityMatrix(self):
+    def test_constructNodeConnectivityMatrix(self):
         """
         Test that connectivity matrix is correct
         """
@@ -90,6 +90,42 @@ class TestGraph(unittest.TestCase):
         graph.appendEdgeToGraph([n_3, n_6])
         length, path = graph.longestContinousPath()
         self.assertEqual(length, 8)
+
+        del(graph)
+
+        """ Larger test case """
+        # Initialise graph
+        graph_1 = Graph(nodes=[], edges=[])
+
+        # Add nodes
+        graph_nodes = [None] * 14
+        for i in range(14):
+            graph_nodes[i] = graph_1.appendNodeToGraph()
+
+        # Add edges
+        edge_pairs = [
+            [0, 1],
+            [1, 2],
+            [2, 3],
+            [3, 4],
+            [4, 5],
+            [5, 6],
+            [6, 7],
+            [7, 8],
+            [8, 9],
+            [5, 9],
+            [9, 10],
+            [10, 11],
+            [11, 12],
+            [12, 8],
+            [11, 13]]
+
+        for edge in edge_pairs:
+            graph_1.appendEdgeToGraph([graph_nodes[edge[0]], graph_nodes[edge[1]]])
+
+        length, path = graph_1.longestContinousPath()
+        self.assertEqual(length, 13)
+
 
 if __name__ == '__main__':
     unittest.main()

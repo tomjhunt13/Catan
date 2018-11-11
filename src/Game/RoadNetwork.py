@@ -14,8 +14,7 @@ class RoadNetwork(Graph):
             self.board_node_to_road_node[i] = []
 
         self.player_index = player_index
-        super(RoadNetwork, self).__init__()
-
+        super(RoadNetwork, self).__init__(nodes=[], edges=[])
 
     def addRoad(self, edge_index):
         """
@@ -44,17 +43,33 @@ class RoadNetwork(Graph):
         # Add edge between nodes
         self.appendEdgeToGraph(road_network_nodes, {'edge_index': edge_index})
 
-    def breakRoadAtNode(self, node_index):
+    def breakRoadAtNode(self, board_node_index):
         """
-        Handle event where this players road is broken by another players settlment
+        Handle event where this players road is broken by another players settlement
         :param node_index: Index of node which settlement was built on
         """
-        pass
+
+        # Check if node is in self.board_node_to_road_node
+        graph_nodes = self.board_node_to_road_node[board_node_index]
+        if len(graph_nodes) == 0:
+            return
+
+        # Find graph edges connected to graph node
+        connection_index = 0
+        for index, connectivity in enumerate(self.node_connectivity[graph_nodes[0]]):
+            # For each connected edge apart from the first, add a new node and update the nodes on the edge
+            if connectivity == 1:
+                if connection_index != 0:
+                    new_id = self.appendNodeToGraph({'board_index': board_node_index})
+
+                    # Get edge object
+                    for edge in self.edges:
+
+                        if edge.nodes == [index, graph_nodes[0]] or edge.nodes == [graph_nodes[0], index]:
+                            edge.nodes = [new_id, index]
+
+                connection_index += 1
+                self.node_connectivity = constructNodeConnectivityMatrix(self.listEdgeNodeIndices())
+
         # If another player builds a settlement at node node_index which breaks the road network, add another node to graph to represent disconnect
 
-
-
-if __name__ == "__main__":
-    a = RoadNetwork()
-
-    print(dir(a))
