@@ -136,7 +136,7 @@ class GameManager:
 
                 # Check hex isn't blocked by robber
                 if hex.ID != self.robber_location:
-                    
+
                     # Get all nodes connected to this hex
                     for node_index in self.game_board.hex_node_connectivity[hex.ID]:
 
