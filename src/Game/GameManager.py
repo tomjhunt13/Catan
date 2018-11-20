@@ -43,7 +43,8 @@ class GameManager:
         # self.action_functions is a dictionary storing references to the functions to perform actions
         self.action_functions = {'Settlements': self.buildSettlement,
                                  'Cities': self.buildCity,
-                                 'Roads': self.buildRoad}
+                                 'Roads': self.buildRoad,
+                                 'TradeWithGame': self.tradeWithGame}
 
     def startGame(self):
         """
@@ -286,6 +287,27 @@ class GameManager:
             if player_i != player.player_index:
                 self.road_network[player_i].breakRoadAtNode(node_index)
 
+        # Update player best_trade_type if new settlement on port
+        if sum(self.game_board.nodes[node_index].ports) != 0:
+
+            # Get index of port
+            port_index = 0
+            for index in range(6):
+                if self.game_board.nodes[node_index].ports[index] == 1:
+                    port_index = index
+
+            # If 3:1 check that port is better for each resource than existing
+            if port_index == 0:
+                for resource_index in range(5):
+                    if player.best_trade_type[resource_index] > 3:
+                        player.best_trade_type[resource_index] = 3
+                print('Player ' + str(player.player_index) + ' built a 3:1 port')
+
+            # Else update relevant best_trade_type in Player
+            else:
+                player.best_trade_type[port_index - 1] = 2
+                print('Player ' + str(player.player_index) + ' built a 2:1 port  of resource type ' + str(port_index - 1))
+
         print('Player ' + str(player.player_index) + ' built settlement on node ' + str(node_index))
         return True
 
@@ -390,6 +412,68 @@ class GameManager:
 
         print('Player ' + str(player.player_index) + ' built a city on node ' + str(node_index))
         return True
+
+    def tradeWithGame(self, player, trade_index):
+        """
+        Handles port trading and 4:1 trading
+        :param player: Player instance
+        :param trade_index: Index of trade to make.
+                            0 - 3 is trading Wheat for other
+                            4 - 7 is trading Stone for other
+                            8 - 11 is trading Brick for other
+                            12 - 15 is trading Sheep for other
+                            16 - 19 is trading Wood for other
+
+        :return: Bool - can player make the trade
+        """
+
+        # Unpack trade_index
+        trade_index_to_resource_map = [
+            [0, 1],
+            [0, 2],
+            [0, 3],
+            [0, 4],
+
+            [1, 0],
+            [1, 2],
+            [1, 3],
+            [1, 4],
+
+            [2, 0],
+            [2, 1],
+            [2, 3],
+            [2, 4],
+
+            [3, 0],
+            [3, 1],
+            [3, 2],
+            [3, 4],
+
+            [4, 0],
+            [4, 1],
+            [4, 2],
+            [4, 3],
+        ]
+
+        resource_index_to_trade = trade_index_to_resource_map[trade_index][0]
+        desired_resource = trade_index_to_resource_map[trade_index][1]
+
+        # First find out best trade deal player can make
+        required_resources = player.best_trade_type[resource_index_to_trade]
+
+        # Check player has enough cards
+        if player.resource_cards[resource_index_to_trade] < required_resources:
+            return False
+
+        # Else make trade
+        player.resource_cards[resource_index_to_trade] -= required_resources
+        player.resource_cards[desired_resource] += 1
+
+        print('Player ' + str(player.player_index) + ' traded ' + str(required_resources) + ' resources of type ' + str(resource_index_to_trade) + ' for 1 resource of type ' + str(desired_resource))
+
+
+        return True
+
 
     def useKnightCard(self):
         pass

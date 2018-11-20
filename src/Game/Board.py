@@ -100,6 +100,20 @@ class Board:
         for node_id in range(number_of_nodes):
             self.nodes[node_id] = BoardNode(node_id, number_of_players)
 
+        # Assign ports
+        port_locations = [
+            [0, 1, 14, 15, 26, 37, 47, 48],  # 3:1
+            [28, 38],                        # 2:1 Wheat
+            [7, 17],                         # 2:1 Stone
+            [45, 46],                        # 2:1 Brick
+            [3, 4],                          # 2:1 Sheep
+            [50, 51],                        # 2:1 Wood
+        ]
+
+        for type_index, port_list in enumerate(port_locations):
+            for node_index in port_list:
+                self.nodes[node_index].ports[type_index] = 1
+
         # Initialise edges
         edge_pairs = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6],
                        [0, 8], [2, 10], [4, 12], [6, 14],

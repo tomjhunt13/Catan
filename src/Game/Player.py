@@ -42,11 +42,9 @@ class Player:
         """
         self.building_pieces = [15, 5, 4]
 
-        """
-        Road connectivity matrix:
-        
-        Gets updated everytime a 
-        """
+
+        # List of best trade deals via ports / 4:1 for each resource
+        self.best_trade_type = [4, 4, 4, 4, 4]
 
     def setup(self):
         """
@@ -233,14 +231,14 @@ def randomAction(inputVector):
         roads[i] = random.uniform(0, 1)
 
     # Trading
-    trade = [0] * 20
-    for i in range(72):
-        roads[i] = random.uniform(0, 1)
+    trade_with_game = [0] * 20
+    for i in range(20):
+        trade_with_game[i] = random.uniform(0, 1)
 
     # Ending turn
     end_turn = [random.uniform(0, 1)]
 
-    output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads, 'EndTurn': end_turn}
-    output_vector = settlements + cities + roads + end_turn
+    output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads, 'EndTurn': end_turn, 'TradeWithGame': trade_with_game}
+    output_vector = settlements + cities + roads + end_turn + trade_with_game
 
     return output_dictionary, output_vector
