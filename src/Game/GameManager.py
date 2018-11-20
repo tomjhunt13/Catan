@@ -243,7 +243,7 @@ class GameManager:
         3) Player has enough settlement pieces to place
         4) Node is at least two edges away from another city
         5) Node is connected to a relevant road OR game is in setup phase
-        6) Don't allow building by port on turn 1!!!!
+        6) Don't allow building by port on turn 1
         """
 
         # Check 1
@@ -289,6 +289,10 @@ class GameManager:
 
         # Update player best_trade_type if new settlement on port
         if sum(self.game_board.nodes[node_index].ports) != 0:
+
+            # Stop player building by port on setup round
+            if self.turn_counter == 0:
+                return False
 
             # Get index of port
             port_index = 0
