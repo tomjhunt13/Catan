@@ -19,12 +19,17 @@ class GameManager:
                 self.robber_location = index
 
         """
-        Initialise power cards:
+        Initialise development cards:
         
-        - self.number_of_power_cards is list of quantities of each type of power card 
-        - List is in order: [Knight, Take 2 Resources, Construct 2 Roads, Monopoly, Victory Point] 
+        - self.development_cards is deck of development cards 
+        - Indices refer to: [Knight, Take 2 Resources, Construct 2 Roads, Monopoly, Victory Point] 
         """
-        self.number_of_power_cards = [20, 3, 3, 3, 5]
+        number_of_development_cards = [20, 3, 3, 3, 5]
+        self.development_cards = []
+        for development_card_index in range(5):
+            for i in range(number_of_development_cards[development_card_index]):
+                self.development_cards.append(development_card_index)
+        random.shuffle(self.development_cards)
 
         # Initialise player states
         self.players = players
@@ -54,7 +59,8 @@ class GameManager:
         self.action_functions = {'Settlements': self.buildSettlement,
                                  'Cities': self.buildCity,
                                  'Roads': self.buildRoad,
-                                 'TradeWithGame': self.tradeWithGame}
+                                 'TradeWithGame': self.tradeWithGame,
+                                 'BuyDevelopmentCard': self.buyDevelopmentCard}
 
     def startGame(self):
         """
@@ -561,8 +567,11 @@ class GameManager:
         # Move robber
         self.moveRobber(player.player_index)
 
+        # Update knights
+        self.knights[player.player_index] += 1
+
         # Check player has enough knights for largest army
-        if self.knights >= 3:
+        if self.knights[player.player_index] >= 3:
 
             # Check if new army is larger than current largest
             max_army_size = max(self.knights)
@@ -589,8 +598,39 @@ class GameManager:
     def useTakeTwoResourcesCard(self):
         pass
 
-    def buyPowerCard(self):
-        pass
+    def buyDevelopmentCard(self, player, *args):
+        """
+        Checks whether player can buy a development card and does so if can
+        :param player: Player class instance
+        :return: Bool - can player buy development card
+        """
+
+        # Check player has enough resources
+        if not player.hasResources([1, 1, 0, 1, 0]):
+            return False
+
+        # Check enough development cards in deck
+        if len(self.development_cards) == 0:
+            return False
+
+        # Remove development card from deck and give to player
+        development_card_index = self.development_cards[0]
+        player.development_cards[development_card_index] += 1
+        self.development_cards.remove(development_card_index)
+
+        # Remove resources from player
+        player.resource_cards[0] -= 1
+        player.resource_cards[1] -= 1
+        player.resource_cards[3] -= 1
+
+        # Update all other players
+        for player_index in range(4):
+            if player_index != player.player_index:
+                self.players[player_index].number_of_development_cards[player.player_index] += 1
+
+        print('Player ' + str(player.player_index) + ' has purchased a development card.')
+
+        return True
 
 
 

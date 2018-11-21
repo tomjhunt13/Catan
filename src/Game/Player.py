@@ -15,7 +15,7 @@ class Player:
 
         # Information known about other players (ignore element corresponding to self)
         self.number_of_resource_cards = [0, 0, 0, 0]
-        self.number_of_power_cards = [0, 0, 0, 0]
+        self.number_of_development_cards = [0, 0, 0, 0]
 
         """
         Power Cards:
@@ -129,7 +129,7 @@ class Player:
         """
         # Assemble all input values
         board_vector = self.game_manager.game_board.getInputValues()
-        return board_vector + self.number_of_resource_cards + self.number_of_power_cards + self.development_cards + self.resource_cards
+        return board_vector + self.number_of_resource_cards + self.number_of_development_cards + self.development_cards + self.resource_cards
 
     def evaluateNetwork(self, input_vector):
         return self.move_function(input_vector)
@@ -238,7 +238,12 @@ def randomAction(inputVector):
     # Ending turn
     end_turn = [random.uniform(0, 1)]
 
-    output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads, 'EndTurn': end_turn, 'TradeWithGame': trade_with_game}
-    output_vector = settlements + cities + roads + end_turn + trade_with_game
+    # Purchasing development card
+    buy_development_card = [random.uniform(0,1)]
+
+    output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads,
+                         'EndTurn': end_turn, 'TradeWithGame': trade_with_game,
+                         'BuyDevelopmentCard': buy_development_card}
+    output_vector = settlements + cities + roads + end_turn + trade_with_game + buy_development_card
 
     return output_dictionary, output_vector
