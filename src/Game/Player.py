@@ -110,8 +110,8 @@ class Player:
                 return
             else:
                 # If not ending turn, attempt action or set corresponding element to 0 if not possible
-                if not self.game_manager.action_functions[key](self, element):
-                    network_output[key][element] = 0
+                self.game_manager.action_functions[key](self, element)
+                network_output[key][element] = 0
 
         # If not returned, call action again to make next decision
         self.action()
@@ -239,11 +239,15 @@ def randomAction(inputVector):
     end_turn = [random.uniform(0, 1)]
 
     # Purchasing development card
-    buy_development_card = [random.uniform(0,1)]
+    buy_development_card = [random.uniform(0, 1)]
+
+    # Use development card
+    knight = [random.uniform(0, 1)]
 
     output_dictionary = {'Settlements': settlements, 'Cities': cities, 'Roads': roads,
                          'EndTurn': end_turn, 'TradeWithGame': trade_with_game,
-                         'BuyDevelopmentCard': buy_development_card}
-    output_vector = settlements + cities + roads + end_turn + trade_with_game + buy_development_card
+                         'BuyDevelopmentCard': buy_development_card,
+                         'Knight': knight}
+    output_vector = settlements + cities + roads + end_turn + trade_with_game + buy_development_card + knight
 
     return output_dictionary, output_vector

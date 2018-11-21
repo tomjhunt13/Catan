@@ -60,7 +60,8 @@ class GameManager:
                                  'Cities': self.buildCity,
                                  'Roads': self.buildRoad,
                                  'TradeWithGame': self.tradeWithGame,
-                                 'BuyDevelopmentCard': self.buyDevelopmentCard}
+                                 'BuyDevelopmentCard': self.buyDevelopmentCard,
+                                 'Knight': self.useKnightCard}
 
     def startGame(self):
         """
@@ -125,12 +126,12 @@ class GameManager:
             self.turn()
 
             # Check game has ended
-            if self.countPoints(self.player_turn) == 6:
+            if self.countPoints(self.player_turn) == 10:
                 print('Player ' + str(self.player_turn) + ' has won!')
                 game_ended = True
                 break
 
-            elif self.turn_counter == 100:
+            elif self.turn_counter == 200:
                 print('No player won')
                 game_ended = True
                 break
@@ -551,8 +552,7 @@ class GameManager:
 
         return total_points
 
-
-    def useKnightCard(self, player):
+    def useKnightCard(self, player, *args):
         """
         Uses knight development card
         :return: Bool - can player use knight development card
@@ -562,7 +562,7 @@ class GameManager:
         if player.development_cards[0] == 0:
             return False
 
-        print('Player ' + str(player.player_index) + ' has played knight card')
+        print('Player ' + str(player.player_index) + ' has played a knight card')
 
         # Move robber
         self.moveRobber(player.player_index)
@@ -631,7 +631,6 @@ class GameManager:
         print('Player ' + str(player.player_index) + ' has purchased a development card.')
 
         return True
-
 
 
 def loopingIterator(current_index, increment=True, players=4):

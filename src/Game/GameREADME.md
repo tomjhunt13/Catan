@@ -7,7 +7,6 @@
 - _develop.py_ is an example script which instantiates all game classes and calls the run function
 
 # Things To Do:
-- _Win Condition:_ Add points to game and end it when player has won.
 
 - _Player To Player Trading:_ Implement a mechanism to trade with other players and an interface for the AI. Current ideas are: 
     1) Player has function which decides whether or not to accept trade. Try out many combinations on self to find own best offer and offer to others
