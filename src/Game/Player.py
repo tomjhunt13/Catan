@@ -20,10 +20,10 @@ class Player:
         """
         Power Cards:
 
-        - self.power_cards is a list of number of each type of card
+        - self.development_cards is a list of number of each type of card
          - List order is: [Knight, Take 2 Resources, Construct 2 Roads, Monopoly, Victory Point]]
         """
-        self.power_cards = [0] * 5
+        self.development_cards = [0] * 5
 
         """
         Resources:
@@ -129,7 +129,7 @@ class Player:
         """
         # Assemble all input values
         board_vector = self.game_manager.game_board.getInputValues()
-        return board_vector + self.number_of_resource_cards + self.number_of_power_cards + self.power_cards + self.resource_cards
+        return board_vector + self.number_of_resource_cards + self.number_of_power_cards + self.development_cards + self.resource_cards
 
     def evaluateNetwork(self, input_vector):
         return self.move_function(input_vector)
@@ -137,7 +137,7 @@ class Player:
     def hasResources(self, resources):
         """
         Checks player has resources
-        :param resources: Vector of quantity of resources required in order l[Wheat, Stone, Brick, Sheep, Wood]
+        :param resources: Vector of quantity of resources required in order [Wheat, Stone, Brick, Sheep, Wood]
         :return: Bool - True if player has enough resources
         """
         if (self.resource_cards[0] >= resources[0]) and (self.resource_cards[1] >= resources[1]) and (

@@ -31,11 +31,18 @@ class GameManager:
         self.player_turn = 0
         self.starting_player = 0
         self.points = [0, 0, 0, 0]
+
+
         self.road_network = [None] * 4
         self.road_lengths = [0, 0, 0, 0]
         self.longest_road_player_index = 0
+
         self.settlements = [0, 0, 0, 0]
         self.cities = [0, 0, 0, 0]
+
+        self.knights = [0, 0, 0, 0]
+        self.largest_army_index = 0
+
         for index, player in enumerate(self.players):
             player.player_index = index
             player.game_manager = self
@@ -194,20 +201,28 @@ class GameManager:
                 player.discardHalfCards()
 
         # Next current player must move robber
-        self.players[self.player_turn].moveRobber()
-        print('Player ' + str(self.player_turn) + ' moved robber to hex: ' + str(self.robber_location))
+        self.moveRobber(self.player_turn)
+
+    def moveRobber(self, player_index):
+        """
+        Contains logic for moving robber and stealing resource cards
+        :param player_index: Index of player moving robber
+        """
+
+        self.players[player_index].moveRobber()
+        print('Player ' + str(player_index) + ' moved robber to hex: ' + str(self.robber_location))
 
         # Get list of all players with connected settlements
         players_to_steal_from = []
         for node in self.game_board.hex_node_connectivity[self.robber_location]:
             for index, player_has_settlement in enumerate(self.game_board.nodes[node].settlement):
-                if player_has_settlement == 1 and index != self.player_turn:
+                if player_has_settlement == 1 and index != player_index:
                     if index not in players_to_steal_from and sum(self.players[index].resource_cards) > 0:
                         players_to_steal_from.append(index)
 
         # Steal resource card from a player with a connected settlement to hex
         if len(players_to_steal_from) != 0:
-            chosen_player = self.players[self.player_turn].choosePlayerToStealFrom(players_to_steal_from)
+            chosen_player = self.players[player_index].choosePlayerToStealFrom(players_to_steal_from)
 
             # Get random resource from player
             num_cards = sum(self.players[chosen_player].resource_cards)
@@ -217,7 +232,7 @@ class GameManager:
                 cards_to_take -= self.players[chosen_player].resource_cards[resource_type]
                 if cards_to_take < 0:
                     self.players[chosen_player].resource_cards[resource_type] -= 1
-                    print('Player ' + str(self.player_turn) + ' stole resource type ' + str(resource_type) + ' from player ' + str(chosen_player))
+                    print('Player ' + str(player_index) + ' stole resource type ' + str(resource_type) + ' from player ' + str(chosen_player))
                     break
 
 
@@ -440,7 +455,6 @@ class GameManager:
         self.cities[player.player_index] += 1
         self.settlements[player.player_index] -= 1
 
-
         print('Player ' + str(player.player_index) + ' built a city on node ' + str(node_index))
         return True
 
@@ -523,11 +537,45 @@ class GameManager:
             if player_index == self.longest_road_player_index:
                 total_points += 2
 
+        # Largest army
+        if self.knights[self.largest_army_index] >= 3:
+            if player_index == self.largest_army_index:
+                total_points += 2
+
+
         return total_points
 
 
-    def useKnightCard(self):
-        pass
+    def useKnightCard(self, player):
+        """
+        Uses knight development card
+        :return: Bool - can player use knight development card
+        """
+
+        # First check player has Knight development card
+        if player.development_cards[0] == 0:
+            return False
+
+        print('Player ' + str(player.player_index) + ' has played knight card')
+
+        # Move robber
+        self.moveRobber(player.player_index)
+
+        # Check player has enough knights for largest army
+        if self.knights >= 3:
+
+            # Check if new army is larger than current largest
+            max_army_size = max(self.knights)
+            number_with_same_length = 0
+            for i in range(4):
+                if self.road_lengths[i] == max_army_size:
+                    number_with_same_length += 1
+
+            if number_with_same_length != 1:
+                self.largest_army_index = player.player_index
+                print('Player ' + str(player.player_index) + ' has largest army')
+
+        return True
 
     def useTwoRoadsCard(self):
         pass
