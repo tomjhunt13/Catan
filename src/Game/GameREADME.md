@@ -7,10 +7,6 @@
 - _develop.py_ is an example script which instantiates all game classes and calls the run function
 
 # Things To Do:
-- _Ports:_ Add in ports and port trading. 
-    1) Set up port locations in Board \_\__init_\_\_ function
-    2) Add function in _GameManager_ to make trades via the ports / using 4:1 without ports
-    
 - _Win Condition:_ Add points to game and end it when player has won.
 
 - _Player To Player Trading:_ Implement a mechanism to trade with other players and an interface for the AI. Current ideas are: 

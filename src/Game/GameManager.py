@@ -33,6 +33,9 @@ class GameManager:
         self.points = [0, 0, 0, 0]
         self.road_network = [None] * 4
         self.road_lengths = [0, 0, 0, 0]
+        self.longest_road_player_index = 0
+        self.settlements = [0, 0, 0, 0]
+        self.cities = [0, 0, 0, 0]
         for index, player in enumerate(self.players):
             player.player_index = index
             player.game_manager = self
@@ -94,6 +97,9 @@ class GameManager:
         self.turn_counter = 1
         self.turnManager()
 
+        for i in range(len(self.players)):
+            print('Player ' + str(i) + ' finished with ' + str(self.countPoints(i)) + ' points')
+
     def turnManager(self):
         """
         Outer loop for turn function
@@ -106,8 +112,17 @@ class GameManager:
             self.turn()
 
             # Check game has ended
-            if self.turn_counter == 50:
+            if self.countPoints(self.player_turn) == 6:
+                print('Player ' + str(self.player_turn) + ' has won!')
                 game_ended = True
+                break
+
+            elif self.turn_counter == 100:
+                print('No player won')
+                game_ended = True
+                break
+
+            print('Player ' + str(self.player_turn) + ' has ' + str(self.countPoints(self.player_turn)) + ' points')
 
             # Increment turn counter
             self.player_turn = loopingIterator(self.player_turn)
@@ -187,7 +202,7 @@ class GameManager:
         for node in self.game_board.hex_node_connectivity[self.robber_location]:
             for index, player_has_settlement in enumerate(self.game_board.nodes[node].settlement):
                 if player_has_settlement == 1 and index != self.player_turn:
-                    if index not in players_to_steal_from:
+                    if index not in players_to_steal_from and sum(self.players[index].resource_cards) > 0:
                         players_to_steal_from.append(index)
 
         # Steal resource card from a player with a connected settlement to hex
@@ -205,14 +220,6 @@ class GameManager:
                     print('Player ' + str(self.player_turn) + ' stole resource type ' + str(resource_type) + ' from player ' + str(chosen_player))
                     break
 
-    def count_points(self, player):
-        """
-        Counts number of points player has
-        :param player: Player to count points of
-        :return: Number of points player has
-        """
-
-        return self.turn_counter
 
     def endTurn(self):
         """
@@ -312,6 +319,9 @@ class GameManager:
                 player.best_trade_type[port_index - 1] = 2
                 print('Player ' + str(player.player_index) + ' built a 2:1 port  of resource type ' + str(port_index - 1))
 
+        # Update tally of settlements
+        self.settlements[player.player_index] += 1
+
         print('Player ' + str(player.player_index) + ' built settlement on node ' + str(node_index))
         return True
 
@@ -368,6 +378,20 @@ class GameManager:
         player_road_length, path = self.road_network[player.player_index].longestContinousPath()
         self.road_lengths[player.player_index] = player_road_length
 
+        # Check road is long enough for longest road
+        if player_road_length >= 5:
+
+            # Check if new road length is longer than current longest
+            max_road_length = max(self.road_lengths)
+            number_with_same_length = 0
+            for i in range(4):
+                if self.road_lengths[i] == max_road_length:
+                    number_with_same_length += 1
+
+            if number_with_same_length != 1:
+                self.longest_road_player_index = player.player_index
+                print('Player ' + str(player.player_index) + ' has longest road')
+
         print('Player ' + str(player.player_index) + ' built road on edge ' + str(edge_index) +
               ', connecting nodes ' + str(self.game_board.edges[edge_index].nodes[0]) +
               ' and ' + str(self.game_board.edges[edge_index].nodes[1]) +
@@ -413,6 +437,9 @@ class GameManager:
 
         # Update city pieces
         player.building_pieces[2] -= 1
+        self.cities[player.player_index] += 1
+        self.settlements[player.player_index] -= 1
+
 
         print('Player ' + str(player.player_index) + ' built a city on node ' + str(node_index))
         return True
@@ -477,6 +504,26 @@ class GameManager:
 
 
         return True
+
+    def countPoints(self, player_index):
+        """
+        Counts the total number of points player player_index has
+        :param player_index: Index of player to count points of
+        :return: Number of points
+        """
+
+        total_points = 0
+
+        # Settlements and Cities
+        total_points += self.settlements[player_index]
+        total_points += 2 * self.cities[player_index]
+
+        # Roads
+        if self.road_lengths[self.longest_road_player_index] >= 5:
+            if player_index == self.longest_road_player_index:
+                total_points += 2
+
+        return total_points
 
 
     def useKnightCard(self):
