@@ -4,7 +4,7 @@
 This project recreates the board game Catan. The end goal is to create
 an API which could be used to train AI models.
 
-## Current Framework:
+## Current Framework
 - _GameManager_ is responsible for all rules and logic of the game as
   well incrementing the turn
 - _Board_ is a representation of the board
@@ -13,7 +13,7 @@ an API which could be used to train AI models.
 - _main.py_ is an example script which instantiates all game
   classes and calls the run function
 
-## Things To Do:
+## Things To Do
 
 - _Player To Player Trading:_ Implement a mechanism to trade with other
   players and an interface for the AI. Current ideas are:
