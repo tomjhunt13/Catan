@@ -1,6 +1,6 @@
 import unittest
 
-from src.Game.Board import *
+from src.Board import *
 
 class EmptyNodes(unittest.TestCase):
     def test_IsEmpty(self):

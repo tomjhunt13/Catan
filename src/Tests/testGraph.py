@@ -1,6 +1,6 @@
 import unittest
 
-from src.Game.Graph import *
+from src.Graph import *
 
 
 class TestGraph(unittest.TestCase):

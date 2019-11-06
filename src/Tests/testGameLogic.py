@@ -1,7 +1,7 @@
 import unittest
 
-from src.Game.GameManager import *
-from src.Game.Player import *
+from src.GameManager import *
+from src.Player import *
 
 
 class SettlementPlacement(unittest.TestCase):

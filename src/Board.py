@@ -1,5 +1,5 @@
 from random import shuffle
-from src.Game.Graph import *
+from src.Graph import *
 
 
 class BoardNode:

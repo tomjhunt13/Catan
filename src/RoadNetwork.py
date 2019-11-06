@@ -1,4 +1,4 @@
-from src.Game.Graph import *
+from src.Graph import *
 
 class RoadNetwork(Graph):
     def __init__(self, game_board, player_index):

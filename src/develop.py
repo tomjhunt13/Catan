@@ -1,7 +1,7 @@
 import time
 
-from src.Game.GameManager import *
-from src.Game.Player import *
+from src.GameManager import *
+from src.Player import *
 
 player_1 = Player(randomAction)
 player_2 = Player(randomAction)

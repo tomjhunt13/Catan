@@ -1,7 +1,7 @@
 import unittest
 
-from src.Game.RoadNetwork import *
-from src.Game.Board import *
+from src.RoadNetwork import *
+from src.Board import *
 
 
 class TestRoadNetwork(unittest.TestCase):

@@ -1,7 +1,7 @@
 import random
 
-from src.Game.Board import *
-from src.Game.RoadNetwork import *
+from src.Board import *
+from src.RoadNetwork import *
 
 """
 GameManager class to store and manage rules of game

@@ -1,6 +1,6 @@
 import unittest
 
-from src.Game.Player import *
+from src.Player import *
 
 class PlayerChecks(unittest.TestCase):
 
